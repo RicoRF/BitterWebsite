@@ -7,6 +7,27 @@ include_once('connect.php');
 
 if(isset($_POST["button"])){
 	
+	$postalCode = mysqli_real_escape_string($con, $_POST["postalCode"]);
+	$postalCode = str_replace(' ', '+', $postalCode);
+
+	$ch = curl_init("http://localhost/bitter/includes/Fedex/ValidatePostalCodeService/ValidatePostalCodeWebServiceClient.php?postalCode=".$postalCode."");
+
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+	$response = curl_exec($ch);
+	if(curl_error($ch)) {
+		header("location: signup.php?message=Error, please try again.");
+		die;
+	}
+	curl_close($ch);
+
+	if($response != "ok"){
+		
+		header("location: signup.php?message=Postal code is not valid, please try again.");
+		die;
+		
+	}
+	
 	$fName = mysqli_real_escape_string($con, $_POST["firstname"]);
 	$lName = mysqli_real_escape_string($con, $_POST["lastname"]);
 	$email = mysqli_real_escape_string($con, $_POST["email"]);

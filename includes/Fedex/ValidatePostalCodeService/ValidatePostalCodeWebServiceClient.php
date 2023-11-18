@@ -7,6 +7,14 @@ $path_to_wsdl = "../wsdl/CountryService/CountryService_v5.wsdl";
 
 ini_set("soap.wsdl_cache_enabled", "0");
  
+if(!isset($_GET["postalCode"])){
+	
+	header('location: ../../../index.php');
+	
+}
+
+else {
+ 
 $client = new SoapClient($path_to_wsdl, array('trace' => 1)); // Refer to http://us3.php.net/manual/en/ref.soap.php for more information
 
 $request['WebAuthenticationDetail'] = array(
@@ -33,7 +41,7 @@ $request['Version'] = array(
 );
 
 $request['Address'] = array(
-	'PostalCode' => 'E3B2X9',
+	'PostalCode' => $_GET["postalCode"],
 	'CountryCode' => 'CA'
 );
 
@@ -48,15 +56,19 @@ try {
 	$response = $client -> validatePostal($request);
         
     if ($response -> HighestSeverity != 'FAILURE' && $response -> HighestSeverity != 'ERROR'){  	
-    	printSuccess($client, $response);
+    	
+		echo 'ok';
+		
+		/*printSuccess($client, $response);
 
 		//loop through array that is returned in the reply
 		echo "<table>\n";
 		printPostalDetails($response -> PostalDetail, "");
-		echo "</table>\n";
+		echo "</table>\n";*/
 
 	}else{
-        printError($client, $response);
+        //printError($client, $response);
+		echo 'postal code is not valid';
     } 
     
     writeToLog($client);    // Write to log file   
@@ -84,6 +96,8 @@ function printPostalDetails($details, $spacer){
     		printString($spacer, $key, $value);
     	}
     }
+}
+
 }
 
 ?>

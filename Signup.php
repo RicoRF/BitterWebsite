@@ -182,7 +182,7 @@ include_once("functions.php");
 		
 		//RegEx extracted from chatGPT
 		
-		postalCode = postalCode.replace(/[^A-Za-z0-9]/g, '');
+		/*postalCode = postalCode.replace(/[^A-Za-z0-9]/g, '');
 
 		//RegEx extracted from https://stackoverflow.com/questions/15774555/efficient-regex-for-canadian-postal-code-function
 		let postalCodeRegex = /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i;
@@ -192,7 +192,7 @@ include_once("functions.php");
 			result += "Postal Code is not valid.\n";
 			valid = false;
 			
-		}
+		}*/
 		
 		if(desc == ""){
 			

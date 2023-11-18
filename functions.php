@@ -231,13 +231,11 @@ function checkTime($time){
 			
 			if($followers_id != ""){
 			
-			$sql_following = "SELECT COUNT(*) FROM follows WHERE from_id = ".$currentUserID." AND to_id IN(".$followers_id.")";
+			$sql_following = "SELECT * FROM follows WHERE from_id = ".$currentUserID." AND to_id IN(".$followers_id.")";
 			
 			$result_following = mysqli_query($con, $sql_following);
 			
-			$row_following = mysqli_fetch_array($result_following);
-			
-			$final_result = $row_following[0];
+			$final_result = mysqli_num_rows($result_following);
 			
 			if($final_result != 1){
 				
@@ -250,6 +248,23 @@ function checkTime($time){
 				echo "1 follower you know.";
 				
 			}
+			
+			$num_users = 0;
+			
+			$result_following_limit_3 = mysqli_query($con, "SELECT * FROM follows WHERE from_id = ".$currentUserID." AND to_id IN(".$followers_id.") ORDER BY RAND() LIMIT 3");
+			
+			while($rs = mysqli_fetch_array($result_following_limit_3)){
+				
+				$userInfo = new User(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+				$userInfo->Populate($rs[2], $con);
+				echo '<a href="userpage.php?user_id='.$userInfo->user_id.'"><div style="margin-top: 10px; margin-left: 6px; margin-right: 6px;">
+				<img style="border: 4px solid black; width: 64px; margin-right: 6px;" src="'.checkProfilePhoto($con, $userInfo->user_id).'" style="max-width: 60px; max-height: 60px;margin-right: 20px;">';
+				echo '@'.$userInfo->screen_name.' '.$userInfo->first_name.' '.$userInfo->last_name;
+				echo '</div></a>';
+								
+			}
+			
+			//echo '<div style="padding-top: 10px; border-top: 4px solid white; margin-top: 10px; margin-bottom: 10px;"></div>';
 			
 			}
 			
@@ -456,6 +471,163 @@ function checkTime($time){
 						</div>';
 						
 					}
+		
+	}
+	
+	function displayUsersSearch($con, $value, $currentUserId){
+		
+			$value = strtolower($value);
+			$value = htmlspecialchars($value);
+		
+			$sql = "SELECT user_id FROM users WHERE screen_name = '".$value."' OR first_name = '".$value."' OR last_name = '".$value."'";
+			
+			$rs = mysqli_query($con, $sql);
+			
+			if(mysqli_num_rows($rs) == 0){
+						echo '<p>No results were found.</p>';
+					}
+						
+			while($row = mysqli_fetch_array($rs)){
+				
+				$userInfo = new User(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+				$userInfo->Populate($row[0], $con);
+				
+				echo '<div style="background: #fff; margin-bottom: 20px; border-radius: 20px; padding: 20px;">';
+				
+				echo '<img style="border: 4px solid yellow; background: white; width: 64px; margin-right: 6px;" src="'.checkProfilePhoto($con, $userInfo->user_id).'" style="max-width: 60px; max-height: 60px;margin-right: 20px;">';
+				echo '<a href="userpage.php?user_id='.$userInfo->user_id.'">'.$userInfo->first_name.' '.$userInfo->last_name.' @'.$userInfo->screen_name.'</a>';
+
+				if($userInfo->user_id != $currentUserId){
+				
+				if(checkFollow($con, $currentUserId, $userInfo->user_id)){
+					echo ' Following';
+				}
+				
+				else {
+					
+					echo '<a href="follow_proc.php?user_id='.$userInfo->user_id.'" class="btn btn-primary" style="background: black; border-color: black; font-size: 1em; margin-left: 80px;">Follow</a>';
+					
+				}
+				
+				if(checkFollow($con, $userInfo->user_id, $currentUserId)){
+					echo ' | Following you';
+				}
+				
+				}
+				
+				echo '</div>';
+				
+			}
+		
+	}
+	
+	function checkFollow($con, $follower_id, $followed_id){
+		
+		$sql = "SELECT * FROM follows WHERE from_id = ".$follower_id." AND to_id = ".$followed_id."";
+		$query = mysqli_query($con, $sql);
+		$result = mysqli_num_rows($query);
+		if($result > 0){
+			return true;
+		}
+		else {
+			return false;
+		}
+		
+	}
+	
+	function displayTweetsSearch($con, $value, $currentUserId){
+		
+		$value = strtolower($value);
+		$value = htmlspecialchars($value);
+		
+		
+		$sql_getting_tweets = "SELECT * FROM tweets WHERE tweet_text LIKE '%".$value."%' ORDER BY date_created DESC";
+					
+					$retrieve_tweets = mysqli_query($con, $sql_getting_tweets);
+					
+					if(mysqli_num_rows($retrieve_tweets) == 0){
+						echo '<p>No results were found.</p>';
+					}
+					
+					echo '<script src="Includes/requests.js"></script>';
+					
+					while($row_tweets = mysqli_fetch_array($retrieve_tweets)){
+						
+						//$userInfo = getUserInfo($con, $row_tweets["user_id"]);
+						$userInfo = new User(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+						$userInfo->Populate($row_tweets["user_id"], $con);
+						
+						$tweetInfo = new Tweet(null, null, null, null, null, null);
+						$tweetInfo->Populate($row_tweets["tweet_id"], $con);
+						
+						echo '<div class="row" id="tweet_number_'.$tweetInfo->tweet_id.'" style="background: #fff; margin-bottom: 20px; border-radius: 20px; padding: 20px;">';
+						echo '<div class="col-2" style=""><img src="'.checkProfilePhoto($con, $userInfo->user_id).'" style="max-width: 60px; max-height: 60px;margin-right: 20px;"></div>';
+						echo '<div class="col-10">';
+						if($tweetInfo->original_tweet_id != 0){							
+							
+							$result = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM tweets WHERE tweet_id = ".$tweetInfo->original_tweet_id.""));
+							
+							$resultUser = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM users WHERE user_id = ".$result["user_id"].""));
+							
+							echo '<span style="font-size: 14px;">Retweet from <a href="userpage.php?user_id='.$result["user_id"].'" style="">@';
+							
+							echo $resultUser["screen_name"]."</a> ".checkTime($result["date_created"])."</span><br>";
+							
+						}
+						
+						if($tweetInfo->reply_to_tweet_id != 0){							
+							
+							$result = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM tweets WHERE tweet_id = ".$tweetInfo->reply_to_tweet_id.""));
+							
+							$resultUser = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM users WHERE user_id = ".$result["user_id"].""));
+							
+							echo '<span style="font-size: 14px;">Replying to <a href="userpage.php?user_id='.$result["user_id"].'" style="">@';
+							
+							echo $resultUser["screen_name"]."</a> ".checkTime($result["date_created"])."</span><br>";
+							
+						}
+						echo '<a href="userpage.php?user_id='.$tweetInfo->user_id.'">'.$userInfo->first_name." ".$userInfo->last_name." @".$userInfo->screen_name."</a> <a alt='".$tweetInfo->date_created."'>".checkTime($tweetInfo->date_created)."</a>";
+						echo '<br>';
+						echo $tweetInfo->tweet_text;
+						echo '<br><a href="retweet.php?tweet_id='.$tweetInfo->tweet_id.'"><img src="Images/retweet.png" style="max-width: 24px;"></a> <a onclick="displayReply.call(this)" data-tweetid="'.$tweetInfo->tweet_id.'"><img src="Images/reply.png" style="max-width: 32px;"></a>';
+						
+						echo '<br>';
+						
+						echo '<style>.reply_default { display: none; }</style>';
+						
+						echo '<div name="reply_tweet" id="reply_tweet_'.$tweetInfo->tweet_id.'" class="reply_default">
+						
+						<span id="error_for_reply_'.$tweetInfo->tweet_id.'"></span>
+						
+						<textarea class="form-control" name="replyText" id="replyText_'.$tweetInfo->tweet_id.'"></textarea><br>
+						<input type="hidden" name="original_tweet_id" value="'.$tweetInfo->original_tweet_id.'">
+						<input type="hidden" name="user_from" id="userFrom_'.$tweetInfo->tweet_id.'" value="'.$currentUserId.'">
+						<input class="btn btn-primary btn-lg btn-block login-button" onclick="replyTweet.call(this)" data-tweetid="'.$tweetInfo->tweet_id.'" type="submit" name="btnSubmit">
+						
+						</div>
+						
+						';
+						
+						echo '</div>
+						
+							<hr style="width: 100%; height: 1px; background: #f2f2f2;">
+						
+							<div style="width: 100%; text-align: center;">
+						
+							<div id="see_replies_'.$tweetInfo->tweet_id.'" style="width: 100%; text-align: center;">
+							
+							</div>
+							
+							<a class="replies_link_style" onclick="showReplies.call(this)" id="show_replies_link_'.$tweetInfo->tweet_id.'" data-tweetid="'.$tweetInfo->tweet_id.'">See replies</a>
+							
+							</div>
+						
+						</div>';
+						
+					}
+		
+			
+		
 		
 	}
 
