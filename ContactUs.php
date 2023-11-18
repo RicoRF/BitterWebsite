@@ -3,6 +3,7 @@
 //it will display all tweets from those we are trolling
 //as well as recommend people we should be trolling.
 //you can also post a tweet from here
+session_start();
 ?>
 
 <!DOCTYPE html>
@@ -71,13 +72,4 @@
 		</div> <!-- end row -->
     </div><!-- /.container -->
 
-	
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-    <script src="includes/bootstrap.min.js"></script>
-    
-  </body>
-</html>
+	<?php include_once("footer.php"); ?>

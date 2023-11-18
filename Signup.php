@@ -1,3 +1,17 @@
+<?php
+
+session_start();
+if(isset($_SESSION["SESS_MEMBER_ID"])){
+	
+	header('location: index.php');
+	
+}
+
+include_once("functions.php");
+
+?>
+
+
 <!DOCTYPE html>
 
 <html lang="en">
@@ -27,18 +41,11 @@
 
   <body>
 
-    <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
-      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      
-
-      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-			<a class="navbar-brand" href="index.html"><img src="images/logo.jpg" class="logo"></a>
-		
-        
-      </div>
-    </nav>
+    <?php
+	
+	include_once('includes/header.php');
+	
+	?>
 
 	<BR><BR>
     <div class="container">
@@ -47,11 +54,7 @@
 			<div class="main-login main-center">
 				<?php
 				
-					if(isset($_GET["error_message"])){
-						
-						echo "<h5>".$_GET["error_message"]."</h5>";
-						
-					}
+					getMessage();
 				
 				?>
 				<h5>Sign up once and troll as many people as you like!</h5>
@@ -213,6 +216,4 @@
 			
 		</div> <!-- end row -->
     </div><!-- /.container -->
-    
-  </body>
-</html>
+    <?php include_once("footer.php"); ?>

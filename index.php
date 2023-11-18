@@ -3,6 +3,17 @@
 //it will display all tweets from those we are trolling
 //as well as recommend people we should be trolling.
 //you can also post a tweet from here
+
+session_start();
+if(!isset($_SESSION["SESS_MEMBER_ID"])){
+	
+	header('location: login.php');
+	
+}
+
+include_once("connect.php");
+include_once("functions.php");
+
 ?>
 
 <!DOCTYPE html>
@@ -73,6 +84,13 @@
 				
 			</div>
 			<div class="col-md-6">
+			
+				<?php
+				
+				getMessage();
+				
+				?>
+			
 				<div class="img-rounded">
 					<form method="post" id="tweet_form" action="tweet_proc.php">
 					<div class="form-group">
@@ -91,6 +109,50 @@
 				<div class="bold">Who to Troll?<BR></div>
 				<!-- display people you may know here-->
 				
+				<?php
+				
+					//Get the users already following and add this profile id
+				
+					$sql_follows = "SELECT to_id FROM follows WHERE from_id = '".$_SESSION["SESS_MEMBER_ID"]."'";
+					
+					$retrieve_already_following = mysqli_query($con, $sql_follows);
+					
+					$not_follow = $_SESSION["SESS_MEMBER_ID"];
+					
+					$users_following = array();
+					
+					while($row = mysqli_fetch_array($retrieve_already_following)){
+						
+						$users_following[] = $row;
+						
+					}
+					
+					foreach($users_following as $row){
+						
+							
+							$not_follow = $not_follow.", ".$row["to_id"];
+							
+						
+					}
+					
+					//Getting 3 users to follow
+					
+					$sql_getting_users = "SELECT user_id, first_name, last_name, profile_pic FROM users WHERE user_id NOT IN(".$not_follow.") LIMIT 3";
+					
+					$retrieve_users = mysqli_query($con, $sql_getting_users);
+					
+					while($row_users = mysqli_fetch_array($retrieve_users)){
+						
+						echo '<div>';
+						echo '<img src="Images/profilepics/'.$row_users["profile_pic"].'" style="max-width: 60px; max-height: 60px;margin-right: 20px;">';
+						echo '<a href="follow_proc.php?user_id='.$row_users["user_id"].'">'.$row_users["first_name"]." ".$row_users["last_name"]."</a>";
+						echo '<br><a href="follow_proc.php?user_id='.$row_users["user_id"].'" class="btn btn-primary" style="background: black; border-color: black; font-size: 1em; margin-left: 80px;">Follow</a>';
+						echo '</div>';
+						
+					}
+					
+				
+				?>
 				
 				</div><BR>
 				<!--don't need this div for now 
@@ -101,13 +163,4 @@
 		</div> <!-- end row -->
     </div><!-- /.container -->
 
-	
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-    <script src="includes/bootstrap.min.js"></script>
-    
-  </body>
-</html>
+	<?php include_once("footer.php"); ?>

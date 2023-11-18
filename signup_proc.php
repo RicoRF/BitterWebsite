@@ -40,7 +40,7 @@ if(isset($_POST["button"])){
 
 	if(mysqli_query($con, $query)){
 		
-		header('location: login.php');
+		header('location: login.php?message=User created succesfully.');
 		exit;
 		
 	}
@@ -59,6 +59,6 @@ else {
 	
 }
 
-header('location: signup.php?error_message='.$msg.'');
+header('location: signup.php?message='.$msg.'');
 
 ?>

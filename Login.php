@@ -1,3 +1,15 @@
+<?php
+
+session_start();
+if(isset($_SESSION["SESS_MEMBER_ID"])){
+	
+	header('location: index.php');
+	
+}
+include_once("functions.php");
+
+?>
+
 <!DOCTYPE html>
 
 
@@ -26,22 +38,23 @@
 
   <body>
 
-    <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
-      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      
-
-      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-			<a class="navbar-brand" href="index.html"><img src="images/logo.jpg" class="logo"></a>
-		
-        
-      </div>
-    </nav>
+    <?php
+	
+	include_once("includes/header.php");
+	
+	?>
 
 	<BR><BR>
     <div class="container">
+	
+	<?php
+		
+			getMessage();
+		
+		?>
+	
 		<div class="row">
+		
 			<div class="main-center  mainprofile">
 				<h1>Bitter</h1>
 				<p class="lead">Bitter - Social Media for Trolls, Narcissists, Bullies and United States Presidents.<br></p>
@@ -84,6 +97,4 @@
 			
 		</div> <!-- end row -->
     </div><!-- /.container -->
-    
-  </body>
-</html>
+    <?php include_once("footer.php"); ?>

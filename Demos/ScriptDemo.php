@@ -153,7 +153,7 @@ option2desc <br />
 
 	// Build your SQL query string... MAKE SURE you select all the fields you need!	
 	$strCategory = "Sportswear";
-	$strSQL = "SELECT ID, Category, Image, Price, Description, Option2Desc FROM Products WHERE Category = '$strCategory' ORDER BY ID";
+	$strSQL = "SELECT * FROM Products WHERE Category = '$strCategory' ORDER BY ID";
 	// Misspell one of the above fieldnames and see what error you get on your webpage.				
 	
 	// or  $strSQL = "SELECT * FROM Products WHERE Category = '$strCategory' ORDER BY ID";				
@@ -209,16 +209,19 @@ option2desc <br />
 		
 		// Display Option1... currently all hardcoded.		
 		// Change to be dynamic, from database.
-		if (true) {
-			echo '
-				<br clear=all /><br />
-				option1desc <br />
-				<ul>
-					<li>option1a</li> <li>option1b</li>
-					<li>option1c</li> <li>option1d</li>
+		if ( $rowProd["Option1Desc"] != "" ) {
+		   	echo '
+				<br clear=all /><br /> '
+				. $rowProd["Option1Desc"] . ' <br /> 
+				
+				<ul style="list-style-type: none;">
+				<li>'.$rowProd["Option1a"].'</li>
+				<li>'.$rowProd["Option1b"].'</li>
+				<li>'.$rowProd["Option1c"].'</li>
+				<li>'.$rowProd["Option1d"].'</li>
 				</ul>
 			';
-		}
+		}	
 					
 		// Display Option2... currently mostly hardcoded, but with some							
 		// provided code for inspiration. Change to be dynamic, from database.					
@@ -226,9 +229,11 @@ option2desc <br />
 		   	echo '
 				<br clear=all /><br /> '
 				. $rowProd["Option2Desc"] . ' <br /> 
-				<ul>
-					<li>option2a</li> <li>option2b</li>
-					<li>option2c</li> <li>option2d</li>
+				<ul style="list-style-type: none;">
+				<li>'.$rowProd["Option2a"].'</li>
+				<li>'.$rowProd["Option2b"].'</li>
+				<li>'.$rowProd["Option2c"].'</li>
+				<li>'.$rowProd["Option2d"].'</li>
 				</ul>
 			';
 		}	
