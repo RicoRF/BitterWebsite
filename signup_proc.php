@@ -7,19 +7,19 @@ include_once('connect.php');
 
 if(isset($_POST["button"])){
 	
-	$fName = $_POST["firstname"];
-	$lName = $_POST["lastname"];
-	$email = $_POST["email"];
-	$screenName = $_POST["username"];
-	$password = $_POST["password"];
-	$confirmPassword = $_POST["confirm"];
-	$phone = $_POST["phone"];
-	$street = $_POST["address"];
-	$province = $_POST["province"];
-	$postalCode = $_POST["postalCode"];
-	$url = $_POST["url"];
-	$description = $_POST["desc"];
-	$location = $_POST["location"];
+	$fName = mysqli_real_escape_string($con, $_POST["firstname"]);
+	$lName = mysqli_real_escape_string($con, $_POST["lastname"]);
+	$email = mysqli_real_escape_string($con, $_POST["email"]);
+	$screenName = mysqli_real_escape_string($con, $_POST["username"]);
+	$password = mysqli_real_escape_string($con, $_POST["password"]);
+	$confirmPassword = mysqli_real_escape_string($con, $_POST["confirm"]);
+	$phone = mysqli_real_escape_string($con, $_POST["phone"]);
+	$street = mysqli_real_escape_string($con, $_POST["address"]);
+	$province = mysqli_real_escape_string($con, $_POST["province"]);
+	$postalCode = mysqli_real_escape_string($con, $_POST["postalCode"]);
+	$url = mysqli_real_escape_string($con, $_POST["url"]);
+	$description = mysqli_real_escape_string($con, $_POST["desc"]);
+	$location = mysqli_real_escape_string($con, $_POST["location"]);
 	
 	$query = "INSERT INTO `users`(`first_name`,
 	`last_name`, `screen_name`, `password`, `address`, `province`, `postal_code`, `contact_number`, `email`, `url`, `description`,
@@ -27,7 +27,7 @@ if(isset($_POST["button"])){
 	VALUES ('".$fName."',
 	'".$lName."',
 	'".$screenName."',
-	'".$password."',
+	'".password_hash($password, PASSWORD_DEFAULT)."',
 	'".$street."',
 	'".$province."',
 	'".$postalCode."',

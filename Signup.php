@@ -35,7 +35,271 @@ include_once("functions.php");
     <script src="includes/bootstrap.min.js"></script>
     
 	<script type="text/javascript">
-		//any JS validation you write can go here
+		
+	var existsDoubleCheck = false;
+		
+	function checkUsername(username) {
+		
+		if (username.length > 0) {
+		
+			let xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = function() {
+				
+			   if (this.status===200 && this.responseText != "") {			   
+				   
+				   document.getElementById("exists").innerHTML = "Username already exists.";
+				   existsDoubleCheck = true;
+
+			   } 
+			   
+			   else {
+				   
+				   document.getElementById("exists").innerHTML = "";
+				   existsDoubleCheck = false;
+				   
+			   }
+				
+			};
+			
+			xmlhttp.open("GET", "user_check.php?username=" + username);
+			xmlhttp.send();
+			
+		}
+		
+		else {
+				   
+				   document.getElementById("exists").innerHTML = "";
+				   
+		}
+		
+	}
+	
+	
+	
+	function validateForm(event){
+		
+		//event.preventDefault();
+		
+		//Declaring variables
+		
+		let valid = true;
+		
+		let result = "";
+						
+		let fName = document.querySelector("#firstname").value;
+		let lName = document.querySelector("#lastname").value;
+		let username = document.querySelector("#username").value;
+		let email = document.querySelector("#email").value;
+		let password = document.querySelector("#password").value;
+		let confirm = document.querySelector("#confirm").value;
+		let phone = document.querySelector("#phone").value;
+		let address = document.querySelector("#address").value;
+		let province = document.querySelector("#province").value;
+		let postalCode = document.querySelector("#postalCode").value;
+		let desc = document.querySelector("#desc").value;
+		let url = document.querySelector("#url").value;
+		let location = document.querySelector("#location").value;
+		
+		//Empty and valid format check
+		
+		if(fName == ""){
+			
+			result += "First Name is empty.\n";
+			valid = false;
+			
+		}
+						
+		if(lName == ""){
+			
+			result += "Last Name is empty.\n";
+			valid = false;
+			
+		}
+		
+		if(username == ""){
+			
+			result += "Username is empty.\n";
+			valid = false;
+			
+		}
+		
+		if(username != "" && existsDoubleCheck){
+			
+			result += "Username already exists.\n";
+			valid = false;
+			
+		}
+		
+		//RegEx extracted from chatGPT
+		
+		let emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+		
+		if(!emailRegex.test(email)){
+			
+			result += "Email is not valid.\n";
+			valid = false;
+			
+		}
+		
+		if(password == ""){
+			
+			result += "Password is empty.\n";
+			valid = false;
+			
+		}
+		
+		if(password != confirm){
+			
+			result += "Passwords don't match.\n";
+			valid = false;
+			
+		}
+		
+		//RegEx extracted from chatGPT
+		
+		phone = phone = phone.replace(/[^0-9]/g, '');
+		
+		if(phone.length != 10){
+			
+			result += "Phone is not valid. \n\tFormats accepted are: XXX-XXX-XXXX and (XXX) XXX-XXXX\n";
+			valid = false;
+			
+		}
+		
+		if(address == ""){
+			
+			result += "Address is empty.\n";
+			valid = false;
+			
+		}
+		
+		if(province == ""){
+			
+			result += "Province is empty.\n";
+			valid = false;
+			
+		}
+		
+		//RegEx extracted from chatGPT
+		
+		postalCode = postalCode.replace(/[^A-Za-z0-9]/g, '');
+
+		//RegEx extracted from https://stackoverflow.com/questions/15774555/efficient-regex-for-canadian-postal-code-function
+		let postalCodeRegex = /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i;
+		
+		if(!postalCodeRegex.test(postalCode)){
+			
+			result += "Postal Code is not valid.\n";
+			valid = false;
+			
+		}
+		
+		if(desc == ""){
+			
+			result += "Description is empty.\n";
+			valid = false;
+			
+		}
+		
+		//Length of characters check
+		
+		if(fName.length > 50){
+			
+			result += "First Name is too long.\n";
+			valid = false;
+			
+		}
+		
+		if(lName.length > 50){
+			
+			result += "Last Name is too long.\n";
+			valid = false;
+			
+		}
+		
+		if(username.length > 50){
+			
+			result += "Username is too long.\n";
+			valid = false;
+			
+		}
+		
+		if(password.length > 250){
+			
+			result += "Password is too long.\n";
+			valid = false;
+			
+		}
+		
+		if(address.length > 200){
+			
+			result += "Address is too long.\n";
+			valid = false;
+			
+		}
+		
+		if(province.length > 50){
+			
+			result += "Province is too long.\n";
+			valid = false;
+			
+		}
+		
+		if(postalCode.length > 7){
+			
+			result += "Postal Code is too long.\n";
+			valid = false;
+			
+		}
+		
+		if(phone.length > 25){
+			
+			result += "Phone is too long.\n";
+			valid = false;
+			
+		}
+		
+		if(email.length > 100){
+			
+			result += "Email is too long.\n";
+			valid = false;
+			
+		}
+		
+		if(url.length > 50){
+			
+			result += "URL is too long.\n";
+			valid = false;
+			
+		}
+		
+		if(desc.length > 160){
+			
+			result += "Description is too long.\n";
+			valid = false;
+			
+		}
+		
+		if(location.length > 50){
+			
+			result += "Location is too long.\n";
+			valid = false;
+			
+		}
+		
+		if(valid != true){
+			
+			event.preventDefault();
+			alert(result);
+			
+		}
+		
+	}
+	
+	$( document ).ready(function() {
+    document.querySelector("#button").addEventListener("click", validateForm, false);
+});
+	
 	</script>
   </head>
 
@@ -61,91 +325,92 @@ include_once("functions.php");
 					<form method="post" id="registration_form" name="registration_form" action="signup_proc.php">
 						
 						<div class="form-group">
-							<label for="name" class="cols-sm-2 control-label">First Name</label>
+							<label for="name" class="cols-sm-2 control-label">First Name*</label>
 							<div class="cols-sm-10">
 								<div class="input-group">
 									
-									<input type="text" class="form-control" required name="firstname" id="firstname"  placeholder="Enter your First Name"/>
+									<input type="text" class="form-control"  name="firstname" id="firstname"  placeholder="Enter your First Name"/>
 								</div>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="name" class="cols-sm-2 control-label">Last Name</label>
+							<label for="name" class="cols-sm-2 control-label">Last Name*</label>
 							<div class="cols-sm-10">
 								<div class="input-group">
 									
-									<input type="text" class="form-control" required name="lastname" id="lastname"  placeholder="Enter your Last Name"/>
-								</div>
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="email" class="cols-sm-2 control-label">Your Email</label>
-							<div class="cols-sm-10">
-								<div class="input-group">
-									
-									<input type="text" class="form-control" required name="email" id="email"  placeholder="Enter your Email"/>
+									<input type="text" class="form-control"  name="lastname" id="lastname"  placeholder="Enter your Last Name"/>
 								</div>
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label for="username" class="cols-sm-2 control-label">Screen Name</label>
+							<label for="email" class="cols-sm-2 control-label">Your Email*</label>
 							<div class="cols-sm-10">
 								<div class="input-group">
 									
-									<input type="text" class="form-control" required name="username" id="username"  placeholder="Enter your Screen Name"/>
+									<input type="text" class="form-control"  name="email" id="email"  placeholder="Enter your Email"/>
 								</div>
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label for="password" class="cols-sm-2 control-label">Password</label>
+							<label for="username" class="cols-sm-2 control-label">Screen Name*</label>
 							<div class="cols-sm-10">
-								<div class="input-group">
-									
-									<input type="password" class="form-control" required name="password" id="password"  placeholder="Enter your Password"/>
+								<div class="input-group">									
+									<input type="text" class="form-control"  name="username" id="username"  placeholder="Enter your Screen Name" onkeyup="checkUsername(this.value)" />
+								</div>
+								<div id="exists">
 								</div>
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label for="confirm" class="cols-sm-2 control-label">Confirm Password</label>
+							<label for="password" class="cols-sm-2 control-label">Password*</label>
 							<div class="cols-sm-10">
 								<div class="input-group">
 									
-									<input type="password" class="form-control" required name="confirm" id="confirm"  placeholder="Confirm your Password"/>
+									<input type="password" class="form-control"  name="password" id="password"  placeholder="Enter your Password"/>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="confirm" class="cols-sm-2 control-label">Confirm Password*</label>
+							<div class="cols-sm-10">
+								<div class="input-group">
+									
+									<input type="password" class="form-control"  name="confirm" id="confirm"  placeholder="Confirm your Password"/>
 								</div>
 							</div>
 						</div>
 						
 						<div class="form-group">
-							<label for="name" class="cols-sm-2 control-label">Phone Number</label>
+							<label for="name" class="cols-sm-2 control-label">Phone Number*</label>
 							<div class="cols-sm-10">
 								<div class="input-group">
 									
-									<input type="text" class="form-control" required name="phone" id="phone"  placeholder="Enter your Phone Number"/>
+									<input type="text" class="form-control"  name="phone" id="phone"  placeholder="Enter your Phone Number"/>
 								</div>
 							</div>
 						</div>
 						
 						<div class="form-group">
-							<label for="name" class="cols-sm-2 control-label">Address</label>
+							<label for="name" class="cols-sm-2 control-label">Address*</label>
 							<div class="cols-sm-10">
 								<div class="input-group">
 									
-									<input type="text" class="form-control" required name="address" id="address"  placeholder="Enter your Address"/>
+									<input type="text" class="form-control"  name="address" id="address"  placeholder="Enter your Address"/>
 								</div>
 							</div>
 						</div>
 						
 						
 						<div class="form-group">
-							<label for="name" class="cols-sm-2 control-label">Province</label>
+							<label for="name" class="cols-sm-2 control-label">Province*</label>
 							<div class="cols-sm-10">
 								<div class="input-group">
 									
-									<select name="province" id="province" class="textfield1" required><?php echo $vprovince; ?> 
+									<select name="province" id="province" class="textfield1" ><?php echo $vprovince; ?> 
 										<option> </option>
 										<option value="British Columbia">British Columbia</option>
 										<option value="Alberta">Alberta</option>
@@ -166,11 +431,11 @@ include_once("functions.php");
 						</div>
 						
 						<div class="form-group">
-							<label for="name" class="cols-sm-2 control-label">Postal Code</label>
+							<label for="name" class="cols-sm-2 control-label">Postal Code*</label>
 							<div class="cols-sm-10">
 								<div class="input-group">
 									
-									<input type="text" class="form-control" required name="postalCode" id="postalCode"  placeholder="Enter your Postal Code"/>
+									<input type="text" class="form-control"  name="postalCode" id="postalCode"  placeholder="Enter your Postal Code"/>
 								</div>
 							</div>
 						</div>
@@ -186,11 +451,11 @@ include_once("functions.php");
 						</div>
 						
 						<div class="form-group">
-							<label for="name" class="cols-sm-2 control-label">Description</label>
+							<label for="name" class="cols-sm-2 control-label">Description*</label>
 							<div class="cols-sm-10">
 								<div class="input-group">
 									
-									<input type="text" class="form-control" required name="desc" id="desc"  placeholder="Description of your profile"/>
+									<input type="text" class="form-control"  name="desc" id="desc"  placeholder="Description of your profile"/>
 								</div>
 							</div>
 						</div>

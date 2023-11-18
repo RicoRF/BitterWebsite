@@ -70,8 +70,8 @@ include_once("functions.php");
 			<div class="col-md-3">
 				<div class="mainprofile img-rounded">
 				<div class="bold">
-				<img class="bannericons" src="">
-				<a href="userpage.php?user_id=">Jimmy Jones</a><BR></div>
+				<img class="bannericons" src="<?php echo checkProfilePhoto($con, $_SESSION["SESS_MEMBER_ID"]); ?>">
+				<a href="userpage.php?user_id=<?php echo $_SESSION["SESS_MEMBER_ID"]; ?>">Jimmy Jones</a><BR></div>
 				<table>
 				<tr><td>
 				tweets</td><td>following</td><td>followers</td></tr>
@@ -95,13 +95,69 @@ include_once("functions.php");
 					<form method="post" id="tweet_form" action="tweet_proc.php">
 					<div class="form-group">
 						<textarea class="form-control" name="myTweet" id="myTweet" rows="1" placeholder="What are you bitter about today?"></textarea>
-						<input type="submit" name="button" id="button" value="Send" class="btn btn-primary btn-lg btn-block login-button"/>
+						<input type="submit" name="buttonTweet" id="button" value="Send" class="btn btn-primary btn-lg btn-block login-button"/>
 						
 					</div>
 					</form>
 				</div>
 				<div class="img-rounded">
-				<!--display list of tweets here-->
+				
+				
+				
+				
+				
+				<?php
+				
+					$sql_follows = "SELECT to_id FROM follows WHERE from_id = '".$_SESSION["SESS_MEMBER_ID"]."'";
+					
+					$retrieve_already_following = mysqli_query($con, $sql_follows);
+					
+					$users_to_show = $_SESSION["SESS_MEMBER_ID"];
+					
+					$users_following = array();
+					
+					while($row = mysqli_fetch_array($retrieve_already_following)){
+						
+						$users_following[] = $row;
+						
+					}
+					
+					foreach($users_following as $row){
+						
+							
+							$users_to_show = $users_to_show.", ".$row["to_id"];
+							
+						
+					}
+					
+					//Getting tweets
+					
+					$sql_getting_tweets = "SELECT * FROM tweets WHERE user_id IN(".$users_to_show.") ORDER BY date_created DESC LIMIT 10";
+					
+					$retrieve_tweets = mysqli_query($con, $sql_getting_tweets);
+					
+					while($row_tweets = mysqli_fetch_array($retrieve_tweets)){
+						
+						$userInfo = getUserInfo($con, $row_tweets["user_id"]);
+						
+						echo '<div class="row" style="background: #fff; margin-bottom: 20px; border-radius: 20px; padding: 20px;">';
+						echo '<div class="col-2" style=""><img src="'.$userInfo["profile_pic"].'" style="max-width: 60px; max-height: 60px;margin-right: 20px;"></div>';
+						echo '<div class="col-10"><a href="userpage.php?user_id='.$row_tweets["user_id"].'">'.$userInfo["fName"]." ".$userInfo["lName"]." @".$userInfo["username"]."</a> <a alt='".$row_tweets["date_created"]."'>".checkTime($row_tweets["date_created"])."</a>";
+						echo '<br>';
+						echo $row_tweets["tweet_text"];
+						echo '</div></div>';
+						
+					}
+				
+				?>
+				
+				
+				
+				
+				
+				
+				
+				
 				</div>
 			</div>
 			<div class="col-md-3">
@@ -144,8 +200,8 @@ include_once("functions.php");
 					while($row_users = mysqli_fetch_array($retrieve_users)){
 						
 						echo '<div>';
-						echo '<img src="Images/profilepics/'.$row_users["profile_pic"].'" style="max-width: 60px; max-height: 60px;margin-right: 20px;">';
-						echo '<a href="follow_proc.php?user_id='.$row_users["user_id"].'">'.$row_users["first_name"]." ".$row_users["last_name"]."</a>";
+						echo '<img src="'.checkProfilePhoto($con, $row_users["user_id"]).'" style="max-width: 60px; max-height: 60px;margin-right: 20px;">';
+						echo '<a href="userpage.php?user_id='.$row_users["user_id"].'">'.$row_users["first_name"]." ".$row_users["last_name"]."</a>";
 						echo '<br><a href="follow_proc.php?user_id='.$row_users["user_id"].'" class="btn btn-primary" style="background: black; border-color: black; font-size: 1em; margin-left: 80px;">Follow</a>';
 						echo '</div>';
 						

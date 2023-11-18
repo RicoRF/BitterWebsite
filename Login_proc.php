@@ -8,10 +8,10 @@ session_start();
 
 if(isset($_POST["button"])){
 	
-	$username = $_POST["username"];
-	$password = $_POST["password"];
+	$username = mysqli_real_escape_string($con, $_POST["username"]);
+	$password = mysqli_real_escape_string($con, $_POST["password"]);
 	
-	$sql = "SELECT user_id, first_name, last_name FROM users WHERE screen_name = '".$username."' AND password = '".$password."'";
+	$sql = "SELECT user_id, first_name, last_name, password FROM users WHERE screen_name = '".$username."'";
 	
 	$execute = mysqli_query($con, $sql);
 	
@@ -19,11 +19,19 @@ if(isset($_POST["button"])){
 		
 		$info = mysqli_fetch_assoc($execute);
 		
+		if(password_verify($password, $info["password"])){
+		
 		$_SESSION["SESS_MEMBER_ID"] = $info["user_id"];
 		$_SESSION["SESS_FIRST_NAME"] = $info["first_name"];
 		$_SESSION["SESS_LAST_NAME"] = $info["last_name"];
 		
 		header('location: index.php');
+		
+		}
+		
+		else {
+			header('location: login.php?message=Password does not match, please try again.');
+		}
 		
 	}
 	
