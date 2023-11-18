@@ -13,6 +13,11 @@ if(!isset($_SESSION["SESS_MEMBER_ID"])){
 
 include_once("connect.php");
 include_once("functions.php");
+include_once("user.php");
+
+$currentUser = new User(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+$currentUser->Populate($_SESSION["SESS_MEMBER_ID"], $con);
 
 ?>
 
@@ -70,13 +75,12 @@ include_once("functions.php");
 			<div class="col-md-3">
 				<div class="mainprofile img-rounded">
 				<div class="bold">
-				<img class="bannericons" src="<?php echo checkProfilePhoto($con, $_SESSION["SESS_MEMBER_ID"]); ?>">
-				<a href="userpage.php?user_id=<?php echo $_SESSION["SESS_MEMBER_ID"]; ?>">Jimmy Jones</a><BR></div>
-				<table>
-				<tr><td>
-				tweets</td><td>following</td><td>followers</td></tr>
-				<tr><td>0</td><td>0</td><td>0</td>
-				</tr></table><BR><BR><BR><BR><BR>
+				<img class="bannericons" src="<?php echo checkProfilePhoto($con, $currentUser->user_id); ?>">
+				<a href="userpage.php?user_id=<?php echo $currentUser->user_id; ?>"><?php echo $currentUser->first_name." ".$currentUser->last_name; ?></a><BR></div>
+				
+				<?php getTFF($con, $currentUser->user_id) ?>
+				
+				<BR><BR><BR><BR><BR>
 				</div><BR><BR>
 				<div class="trending img-rounded">
 				<div class="bold">Trending</div>
@@ -108,46 +112,7 @@ include_once("functions.php");
 				
 				<?php
 				
-					$sql_follows = "SELECT to_id FROM follows WHERE from_id = '".$_SESSION["SESS_MEMBER_ID"]."'";
-					
-					$retrieve_already_following = mysqli_query($con, $sql_follows);
-					
-					$users_to_show = $_SESSION["SESS_MEMBER_ID"];
-					
-					$users_following = array();
-					
-					while($row = mysqli_fetch_array($retrieve_already_following)){
-						
-						$users_following[] = $row;
-						
-					}
-					
-					foreach($users_following as $row){
-						
-							
-							$users_to_show = $users_to_show.", ".$row["to_id"];
-							
-						
-					}
-					
-					//Getting tweets
-					
-					$sql_getting_tweets = "SELECT * FROM tweets WHERE user_id IN(".$users_to_show.") ORDER BY date_created DESC LIMIT 10";
-					
-					$retrieve_tweets = mysqli_query($con, $sql_getting_tweets);
-					
-					while($row_tweets = mysqli_fetch_array($retrieve_tweets)){
-						
-						$userInfo = getUserInfo($con, $row_tweets["user_id"]);
-						
-						echo '<div class="row" style="background: #fff; margin-bottom: 20px; border-radius: 20px; padding: 20px;">';
-						echo '<div class="col-2" style=""><img src="'.$userInfo["profile_pic"].'" style="max-width: 60px; max-height: 60px;margin-right: 20px;"></div>';
-						echo '<div class="col-10"><a href="userpage.php?user_id='.$row_tweets["user_id"].'">'.$userInfo["fName"]." ".$userInfo["lName"]." @".$userInfo["username"]."</a> <a alt='".$row_tweets["date_created"]."'>".checkTime($row_tweets["date_created"])."</a>";
-						echo '<br>';
-						echo $row_tweets["tweet_text"];
-						echo '</div></div>';
-						
-					}
+					retrieveTweets($con, $currentUser->user_id, 10, $currentUser->user_id);
 				
 				?>
 				
@@ -167,46 +132,7 @@ include_once("functions.php");
 				
 				<?php
 				
-					//Get the users already following and add this profile id
-				
-					$sql_follows = "SELECT to_id FROM follows WHERE from_id = '".$_SESSION["SESS_MEMBER_ID"]."'";
-					
-					$retrieve_already_following = mysqli_query($con, $sql_follows);
-					
-					$not_follow = $_SESSION["SESS_MEMBER_ID"];
-					
-					$users_following = array();
-					
-					while($row = mysqli_fetch_array($retrieve_already_following)){
-						
-						$users_following[] = $row;
-						
-					}
-					
-					foreach($users_following as $row){
-						
-							
-							$not_follow = $not_follow.", ".$row["to_id"];
-							
-						
-					}
-					
-					//Getting 3 users to follow
-					
-					$sql_getting_users = "SELECT user_id, first_name, last_name, profile_pic FROM users WHERE user_id NOT IN(".$not_follow.") LIMIT 3";
-					
-					$retrieve_users = mysqli_query($con, $sql_getting_users);
-					
-					while($row_users = mysqli_fetch_array($retrieve_users)){
-						
-						echo '<div>';
-						echo '<img src="'.checkProfilePhoto($con, $row_users["user_id"]).'" style="max-width: 60px; max-height: 60px;margin-right: 20px;">';
-						echo '<a href="userpage.php?user_id='.$row_users["user_id"].'">'.$row_users["first_name"]." ".$row_users["last_name"]."</a>";
-						echo '<br><a href="follow_proc.php?user_id='.$row_users["user_id"].'" class="btn btn-primary" style="background: black; border-color: black; font-size: 1em; margin-left: 80px;">Follow</a>';
-						echo '</div>';
-						
-					}
-					
+					whoToTroll($con, $currentUser->user_id);					
 				
 				?>
 				

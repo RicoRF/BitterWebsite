@@ -1,5 +1,33 @@
 <?php
-//displays all the details for a particular Bitter user
+
+session_start();
+if(!isset($_SESSION["SESS_MEMBER_ID"])){
+	
+	header('location: login.php');
+	
+}
+
+include_once("connect.php");
+include_once("functions.php");
+include_once("user.php");
+
+$currentUser = new User(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+$currentUser->Populate($_SESSION["SESS_MEMBER_ID"], $con);
+
+$thisPageUser = new User(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+if(!isset($_GET["user_id"])){
+
+	$thisPageUser->Populate($_SESSION["SESS_MEMBER_ID"], $con);
+	
+}
+
+else {
+	
+	$thisPageUser->Populate($_GET["user_id"], $con);
+	
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -27,7 +55,9 @@
   <body>
 
     <?php
+	
 	include_once("includes/header.php");
+	
 	?>
 	
 	<BR><BR>
@@ -36,20 +66,16 @@
 			<div class="col-md-3">
 				<div class="mainprofile img-rounded">
 				<div class="bold">
-				<img class="bannericons" src="images/profilepics/default.jfif">
-				Jimmy Jones<BR></div>
-				<table>
-				<tr><td>
-				tweets</td><td>following</td><td>followers</td></tr>
-				<tr><td>0</td><td>0</td><td>0</td>
-				</tr></table>
-				<img class="icon" src="images/location_icon.jpg">New Brunswick
+				<img class="bannericons" src="<?php echo checkProfilePhoto($con, $thisPageUser->user_id); ?>">
+				<?php echo $thisPageUser->first_name." ".$thisPageUser->last_name; ?><BR></div>
+				<?php getTFF($con, $thisPageUser->user_id) ?>
+				<img class="icon" src="images/location_icon.jpg"><?php echo $thisPageUser->province; ?>
 				<div class="bold">Member Since:</div>
-				<div>jan 1, 2001</div>
+				<div><?php echo $thisPageUser->date_created; ?></div>
 				</div><BR><BR>
 				
 				<div class="trending img-rounded">
-				<div class="bold">0 &nbsp;Followers you know<BR>
+				<div class="bold"><?php followersYouKnow($con, $thisPageUser->user_id, $currentUser->user_id); ?><BR>
 				
 				</div>
 				</div>
@@ -60,13 +86,14 @@
 					
 				</div>
 				<div class="img-rounded">
-				
+				<?php retrieveUserTweets($con, $thisPageUser->user_id, 20, $currentUser->user_id); ?>
 				</div>
 			</div>
 			<div class="col-md-3">
 				<div class="whoToTroll img-rounded">
 				<div class="bold">Who to Troll?<BR></div>
-								
+				
+				<?php whoToTroll($con, $currentUser->user_id);	?>
 				
 				</div><BR>
 				

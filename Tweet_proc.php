@@ -9,7 +9,7 @@ if(isset($_POST["buttonTweet"]) && isset($_SESSION["SESS_MEMBER_ID"])){
 	
 	if($_POST["myTweet"] != ""){
 		
-		$sql = "INSERT INTO tweets (user_id, tweet_text) VALUES(".$_SESSION["SESS_MEMBER_ID"].", '".$_POST["myTweet"]."')";
+		$sql = "INSERT INTO tweets (user_id, tweet_text) VALUES(".$_SESSION["SESS_MEMBER_ID"].", '".htmlspecialchars($_POST["myTweet"])."')";
 		
 		if(mysqli_query($con, $sql)){
 			

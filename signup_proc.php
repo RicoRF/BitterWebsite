@@ -21,26 +21,15 @@ if(isset($_POST["button"])){
 	$description = mysqli_real_escape_string($con, $_POST["desc"]);
 	$location = mysqli_real_escape_string($con, $_POST["location"]);
 	
-	$query = "INSERT INTO `users`(`first_name`,
-	`last_name`, `screen_name`, `password`, `address`, `province`, `postal_code`, `contact_number`, `email`, `url`, `description`,
-	`location`)
-	VALUES ('".$fName."',
-	'".$lName."',
-	'".$screenName."',
-	'".password_hash($password, PASSWORD_DEFAULT)."',
-	'".$street."',
-	'".$province."',
-	'".$postalCode."',
-	'".$phone."',
-	'".$email."',
-	'".$url."',
-	'".$description."',
-	'".$location."');
-";
+	include_once("user.php");
+	
+	$newUser = new User(0, $fName, $lName, $screenName, $password, $street, $province, $postalCode, $phone, $email, $url, $description, $location, null, null);
+	
+	$add = $newUser->AddUser($con);
 
-	if(mysqli_query($con, $query)){
+	if($add != false){
 		
-		header('location: login.php?message=User created succesfully.');
+		header('location: login.php?message=User created succesfully. User ID: '.$add);
 		exit;
 		
 	}

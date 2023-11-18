@@ -1,8 +1,10 @@
+CREATE DATABASE  IF NOT EXISTS `bitter-rico` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
+USE `bitter-rico`;
 -- MySQL dump 10.13  Distrib 8.0.30, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: bitter-rico
 -- ------------------------------------------------------
--- Server version	5.5.5-10.4.25-MariaDB
+-- Server version	5.5.5-10.4.28-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -31,7 +33,7 @@ CREATE TABLE `follows` (
   KEY `FK_follows2` (`to_id`),
   CONSTRAINT `FK_follows` FOREIGN KEY (`from_id`) REFERENCES `users` (`user_id`),
   CONSTRAINT `FK_follows2` FOREIGN KEY (`to_id`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,7 +42,7 @@ CREATE TABLE `follows` (
 
 LOCK TABLES `follows` WRITE;
 /*!40000 ALTER TABLE `follows` DISABLE KEYS */;
-INSERT INTO `follows` VALUES (1,3,1),(2,1,3),(3,4,1);
+INSERT INTO `follows` VALUES (1,3,1),(2,1,3);
 /*!40000 ALTER TABLE `follows` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -61,7 +63,7 @@ CREATE TABLE `likes` (
   KEY `FK_user_id_idx` (`user_id`),
   CONSTRAINT `FK_tweet_id` FOREIGN KEY (`tweet_id`) REFERENCES `tweets` (`tweet_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `FK_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -90,7 +92,7 @@ CREATE TABLE `tweets` (
   PRIMARY KEY (`tweet_id`),
   KEY `FK_tweets` (`user_id`),
   CONSTRAINT `FK_tweets` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=122 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -99,7 +101,7 @@ CREATE TABLE `tweets` (
 
 LOCK TABLES `tweets` WRITE;
 /*!40000 ALTER TABLE `tweets` DISABLE KEYS */;
-INSERT INTO `tweets` VALUES (14,'asf',3,0,0,'2021-05-22 13:39:29'),(15,'aa',3,0,0,'2023-10-24 13:39:59'),(16,'qrqr',3,0,0,'2023-10-24 13:41:01'),(17,'qrqrq',1,0,0,'2023-10-24 13:55:32'),(18,'af',1,0,0,'2023-10-24 14:59:29'),(19,'456789',1,0,0,'2023-10-24 15:10:30'),(20,'Hello',4,0,0,'2023-10-24 15:23:10');
+INSERT INTO `tweets` VALUES (14,'asf',3,0,0,'2021-05-22 13:39:29'),(15,'aa',3,0,0,'2023-10-24 13:39:59'),(16,'qrqr',3,0,0,'2023-10-24 13:41:01'),(17,'qrqrq',1,0,0,'2023-10-24 13:55:32'),(18,'af',1,0,0,'2023-10-24 14:59:29'),(19,'456789',1,0,0,'2023-10-24 15:10:30'),(20,'Hello',4,0,0,'2023-10-24 15:23:10'),(118,'We are back',3,0,0,'2023-11-09 18:18:46'),(119,'Replying testing',1,0,118,'2023-11-09 18:18:59'),(120,'Yup, it works!',3,0,119,'2023-11-09 18:19:19'),(121,'Replying testing',3,119,0,'2023-11-09 18:19:21');
 /*!40000 ALTER TABLE `tweets` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -127,7 +129,7 @@ CREATE TABLE `users` (
   `date_created` timestamp NOT NULL DEFAULT current_timestamp(),
   `profile_pic` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -136,7 +138,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Rico','Ferrante','Rico','$2y$10$.uc.6GtS7zI1XjwHd8KGaeK5jwIHJ6Ag9osqKfVxEUukjt3XoLJyG','26 Duffie Drive','New Brunswick','E3B5A3','5062584494','fferrante01@mynbcc.ca','http://rico.ca/','Hello people','Fredericton','2023-10-24 12:21:50','1.png'),(3,'Nick','Test','Nick','$2y$10$kch5uvt2mJkDDQOSN5hw3ewUl/eVsnIIug8OPlI0SQ7L6q85cuva.','26 Duffie Drive','New Brunswick','e3b5a3','5064821147','nick@nbcc.ca','','Test','','2023-10-24 13:24:24',NULL),(4,'New','Rico','newRico','$2y$10$hxuOuLFBov0f5spenSpa3eCOGdFHve3KR/7oD50UwSOgA9xQQiWH2','12 Main St','New Brunswick','e3a2e2','4041231231','new@rico.com','','Hey there','','2023-10-24 15:23:01','4.png');
+INSERT INTO `users` VALUES (1,'Rico','Ferrante','Rico','$2y$10$.uc.6GtS7zI1XjwHd8KGaeK5jwIHJ6Ag9osqKfVxEUukjt3XoLJyG','26 Duffie Drive','New Brunswick','E3B5A3','5062584494','fferrante01@mynbcc.ca','http://rico.ca/','Hello people','Fredericton','2023-10-24 12:21:50','1.jpg'),(3,'Nick','Test','Nick','$2y$10$kch5uvt2mJkDDQOSN5hw3ewUl/eVsnIIug8OPlI0SQ7L6q85cuva.','26 Duffie Drive','New Brunswick','e3b5a3','5064821147','nick@nbcc.ca','','Test','','2023-10-24 13:24:24',NULL),(4,'New','Rico','newRico','$2y$10$hxuOuLFBov0f5spenSpa3eCOGdFHve3KR/7oD50UwSOgA9xQQiWH2','12 Main St','New Brunswick','e3a2e2','4041231231','new@rico.com','','Hey there','','2023-10-24 15:23:01','4.png');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -149,4 +151,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-10-24 12:45:44
+-- Dump completed on 2023-11-09 14:35:27

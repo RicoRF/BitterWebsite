@@ -9,6 +9,12 @@ if(!isset($_SESSION["SESS_MEMBER_ID"])){
 }
 
 include_once("connect.php");
+include_once("functions.php");
+include_once("user.php");
+
+$currentUser = new User(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+$currentUser->Populate($_SESSION["SESS_MEMBER_ID"], $con);
 
 $message = "SUCCESSFUL<BR>";
 
@@ -35,7 +41,7 @@ if (isset($_POST["buttonUploadPhoto"])) {
 				
 				$fileExtension = pathinfo($_FILES["photo"]["name"], PATHINFO_EXTENSION);
 				
-				$fileName = $_SESSION["SESS_MEMBER_ID"].".".$fileExtension;
+				$fileName = $currentUser->user_id.".".$fileExtension;
 				
 				$destFile = "Images/profilepics/" . $fileName;
 								
@@ -43,9 +49,9 @@ if (isset($_POST["buttonUploadPhoto"])) {
 					
 				if (move_uploaded_file($_FILES["photo"]["tmp_name"], $destFile)) {
 					
-					$sql = "UPDATE `users` SET profile_pic = '".$fileName."' WHERE user_id = ".$_SESSION["SESS_MEMBER_ID"]."";
+					//$sql = "UPDATE `users` SET profile_pic = '".$fileName."' WHERE user_id = ".$_SESSION["SESS_MEMBER_ID"]."";
 					
-					if(mysqli_query($con, $sql)){
+					if($currentUser->UpdateUser($con, "profile_pic", $fileName)){
 						
 						$message = "Photo uploaded successfully.";
 						

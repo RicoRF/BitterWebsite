@@ -4,6 +4,8 @@
 
 include_once("connect.php");
 
+include_once("user.php");
+
 session_start();
 
 if(isset($_POST["button"])){
@@ -11,7 +13,7 @@ if(isset($_POST["button"])){
 	$username = mysqli_real_escape_string($con, $_POST["username"]);
 	$password = mysqli_real_escape_string($con, $_POST["password"]);
 	
-	$sql = "SELECT user_id, first_name, last_name, password FROM users WHERE screen_name = '".$username."'";
+	$sql = "SELECT user_id, password FROM users WHERE screen_name = '".$username."'";
 	
 	$execute = mysqli_query($con, $sql);
 	
@@ -21,9 +23,14 @@ if(isset($_POST["button"])){
 		
 		if(password_verify($password, $info["password"])){
 		
+		$currentUser = new User(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+		
 		$_SESSION["SESS_MEMBER_ID"] = $info["user_id"];
-		$_SESSION["SESS_FIRST_NAME"] = $info["first_name"];
-		$_SESSION["SESS_LAST_NAME"] = $info["last_name"];
+		
+		$currentUser->Populate($info["user_id"], $con);
+		
+		$_SESSION["SESS_FIRST_NAME"] = $currentUser->first_name;
+		$_SESSION["SESS_LAST_NAME"] = $currentUser->last_name;
 		
 		header('location: index.php');
 		
